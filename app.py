@@ -5,11 +5,24 @@ import pandas as pd
 
 teams_df = pd.read_csv("data/formula1_2021season_teams.csv")
 teams = teams_df.Team.unique().tolist()
+print(teams)
 
 drivers_df = pd.read_csv("data/formula1_2021season_drivers.csv")
+test = drivers_df[['Team', 'Driver']]
 
 results = pd.read_csv('data/formula1_2021season_raceResults.csv')
 qual_results = pd.read_csv('data/formula1_2021season_sprintQualifyingResults.csv')
+
+results = results.merge(
+    test, left_on='Driver', right_on='Driver'
+).drop(['Team_x'], axis=1)
+results.rename(columns={'Team_y': 'Team'}, inplace=True)
+
+qual_results = qual_results.merge(
+    test, left_on='Driver', right_on='Driver'
+).drop(['Team_x'], axis=1)
+qual_results.rename(columns={'Team_y': 'Team'}, inplace=True)
+
 
 t_pts = results.groupby('Team')['Points'].sum()
 st_pts = qual_results.groupby('Team')['Points'].sum()
@@ -61,8 +74,39 @@ app.layout = html.Div([
                                 'height': 'auto'}),
                         ])
                     ])
-            ], label='Tab1'),
-            dbc.Tab('some', label='Tab2')
+            ], label='Teams Summary'),
+            dbc.Tab([
+                dbc.Row([
+                    dbc.Col([
+                        html.Div([
+                            'Select a row to learn more about a team:',
+                            dt.DataTable(
+                                id='drivers_all',
+                                columns=[{"name": i, "id": i} for i in d_pts.columns],
+                                data=d_pts.to_dict("records"),
+                                # fixed_columns={'headers': True, 'data': 1},
+                                # style_table={'minWidth': '100%'},
+                                style_data={
+                                'whiteSpace': 'normal',
+                                'height': 'auto'},
+                                row_selectable = 'single'
+                                ),
+                            ])]),
+                    dbc.Col([
+                        html.Br(),
+                        html.Br(),
+                        # dt.DataTable(
+                        #     id='teams_table',
+                        #     columns=[{"name": i, "id": i} for i in teams_df.columns],
+                        #     data=teams_df.to_dict("records"),
+                        #     fixed_columns={'headers': True, 'data': 1},
+                        #     style_table={'minWidth': '100%'},
+                        #     style_data={
+                        #         'whiteSpace': 'normal',
+                        #         'height': 'auto'}),
+                        ])
+                    ])
+            ], label='Drivers Summary'),
             ])
                 ),
     # html.Div([
@@ -102,7 +146,8 @@ def teams_display(selected_rows):
         return teams_df.to_dict("records")
     else:
         team_name = t_pts.iloc[selected_rows[0],0]
-        df = teams_df.query("Team == @team_name")
+        print(team_name)
+        df = teams_df.query('Team == @team_name')
         return df.to_dict("records")
 
 if __name__ == '__main__':
