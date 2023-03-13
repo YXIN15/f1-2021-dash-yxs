@@ -38,11 +38,6 @@ t_pts = results.groupby('Team')['Points'].sum()
 st_pts = qual_results.groupby('Team')['Points'].sum()
 t_pts = (t_pts+st_pts).sort_values(ascending=False).reset_index()
 
-# Data wrangling for driver points
-d_pts = results.groupby(['Driver', 'Team'])['Points'].sum()
-sd_pts = qual_results.groupby(['Driver', 'Team'])['Points'].sum()
-d_pts = (d_pts+sd_pts).sort_values(ascending=False).reset_index()
-
 # Data wrangling for driver plot
 df1 = df1.iloc[:, 1:7]
 df1['Status'] = 'Before Season'
@@ -54,6 +49,16 @@ cols_ds=overall_df.columns.tolist()[1:-1]
 melted_df = pd.melt(overall_df, id_vars=['Driver', 'Status'], value_vars=cols_ds,
                     var_name='Stat', value_name='Value')
 
+# Format the driver information table
+def format(x):
+    return "${:.2f}M".format(x/1000000)
+
+# Apply formatting to driving information table
+dr_sum['Contract Cost'] = dr_sum['Contract Cost'].apply(format)
+dr_sum['Salary'] = dr_sum['Salary'].apply(format)
+dr_sum['Buyout'] = dr_sum['Buyout'].apply(format)
+
+# Make the driver ratings plot
 def plot_driver(driver_name):
     if driver_name is None:
         driver_name = "Lewis Hamilton"
@@ -64,7 +69,13 @@ def plot_driver(driver_name):
         column=alt.Column('Stat', title="Driver Ratings"),
         color=alt.Color('Status', legend=None),
         tooltip=['Value']
-        )
+        ).configure_axis(
+            labelFontSize=14,
+            titleFontSize=16
+            ).configure_header(
+                titleFontSize=16,
+                labelFontSize=14).properties(
+                    width=65)
     return chart.to_html()
 
 app = dash.Dash(__name__,
@@ -73,21 +84,23 @@ app = dash.Dash(__name__,
 app.layout = html.Div([
     html.H1('Formula 1 Season 2021 Teams and Drivers'),
     html.Div([
-        html.P('Dash converts Python classes into HTML'),
-        html.P("This conversion happens behind the scenes by Dash's JavaScript front-end")]),
+        html.P('Welcome! This dashboard is based on the Formula 1 2021 Season statistics.'),
+        html.P("Click on the tabs below to navigate between Team and Driver information.")],
+             style={'margin-left': 50,
+                    'margin-top': 25}
+             ),
     dbc.Container(
         dbc.Tabs([
             dbc.Tab([
                 dbc.Row([
+                    html.P('The table below shows the total points each team earned in the 2021 Season.'),
                     dbc.Col([
                         html.Div([
-                            'Select a row to learn more about a team:',
+                            html.P('Select a row to learn more about a team:'),
                             dt.DataTable(
                                 id='teams_all',
                                 columns=[{"name": i, "id": i} for i in t_pts.columns],
                                 data=t_pts.to_dict("records"),
-                                # fixed_columns={'headers': True, 'data': 1},
-                                # style_table={'minWidth': '100%'},
                                 style_data={
                                 'whiteSpace': 'normal',
                                 'height': 'auto'},
@@ -97,21 +110,22 @@ app.layout = html.Div([
                                     'color': 'black',
                                     'fontWeight': 'bold'
                                 },
+                                style_table={'height': '400px'},
                                 row_selectable = 'single'
                                 ),
                             ])
                         ], width=6),
                     dbc.Col([
                         html.Br(),
-                        # html.Br(),
                         html.Div([
                         dt.DataTable(
                             id='teams_table',
-                            # columns=[{"name": i, "id": i} for i in teams_df.columns],
-                            # data=teams_df.to_dict("records"),
-                            # fixed_columns={'headers': True, 'data': 1},
-                            # style_table={'minWidth': '100%'},
-                            style_cell={'textAlign': 'left'},
+                            style_cell={
+                                'textAlign': 'left',
+                                'height': 'auto',
+                                'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
+                                'whiteSpace': 'normal'
+                            },
                             style_header={
                                     'backgroundColor': 'rgb(255, 102, 102)',
                                     'color': 'black',
@@ -119,7 +133,9 @@ app.layout = html.Div([
                                 },
                             style_data={
                                 'whiteSpace': 'normal',
-                                'height': 'auto'})
+                                'height': 'auto'},
+                            style_table={'height': '400px'}
+                            )
                         ])
                         ],
                             style={'width': '100%'}, id='table_cont1'
@@ -132,7 +148,6 @@ app.layout = html.Div([
                     dcc.Dropdown(
                         id="driver_selection",
                         options = [{"label": n, "value": n} for n in d_names],
-                        # value =  drivers_df.Driver.values,
                         placeholder = 'Select a team'),
                     ]),
                 dbc.Row([
@@ -140,15 +155,11 @@ app.layout = html.Div([
                         html.Div([
                             html.Img(id='driver_img')
                         ], 
-                                 id='img_show'
+                                 style={'textAlign': 'center'}, id='img_show'
                                  ),
                         html.Div([
                             dt.DataTable(
                             id='driver_info',
-                            # columns=[{"name": i, "id": i} for i in teams_df.columns],
-                            # data=teams_df.to_dict("records"),
-                            # fixed_columns={'headers': True, 'data': 1},
-                            # style_table={'minWidth': '100%'},
                             style_cell={'textAlign': 'left'},
                             style_header={
                                     'backgroundColor': 'rgb(255, 102, 102)',
@@ -165,54 +176,16 @@ app.layout = html.Div([
                         html.Div([
                             html.Iframe(
                                 id='driver_plot',
-                                style={'border-width': '0', 'width': '100%', 'height': '400px'}
+                                style={'border-width': '0', 'width': '600px', 'height': '600px'}
                             )
                         ],
                                  id='plot_id'
                                  )
                     ])
                 ])
-                    # dbc.Col([
-                    #     html.Br(),
-                    #     html.Br(),
-                    #     # dt.DataTable(
-                    #     #     id='teams_table',
-                    #     #     columns=[{"name": i, "id": i} for i in teams_df.columns],
-                    #     #     data=teams_df.to_dict("records"),
-                    #     #     fixed_columns={'headers': True, 'data': 1},
-                    #     #     style_table={'minWidth': '100%'},
-                    #     #     style_data={
-                    #     #         'whiteSpace': 'normal',
-                    #     #         'height': 'auto'}),
-                    # ])
             ], label='Drivers Summary'),
             ])
-                ),
-    # html.Div([
-    #     'Choose a team:',
-    #     dcc.Dropdown(
-    #         id="team_selection",
-    #         options = [{"label": t, "value": t} for t in teams],
-    #         value =  teams_df.Team.values,
-    #         placeholder = 'Select a team'),
-    #     dt.DataTable(
-    #         id='teams_table',
-    #         columns=[{"name": i, "id": i} for i in teams_df.columns],
-    #         data=teams_df.to_dict("records"),
-    #         fixed_columns={'headers': True, 'data': 1},
-    #         style_table={'minWidth': '100%'},
-    #         style_data={
-    #         'whiteSpace': 'normal',
-    #         'height': 'auto'}
-    #         ),
-    # ]),
-    # html.Div([
-    #     'Choose a driver:',
-    #     dcc.RadioItems(
-    #         options=['New York City', 'Montreal', 'San Francisco'],
-    #         value='Montreal'
-    #     )
-    # ])
+                )
 ])
 
 @app.callback(
@@ -236,7 +209,6 @@ def teams_display(selected_rows):
         df = df[1:]
         columns = [{"name": i, "id": i} for i in df.columns]
         data = df.to_dict("records")
-        # [{"name": i, "id": i} for i in t_pts.columns]
         return style, columns, data
 
 @app.callback(
@@ -259,7 +231,6 @@ def driver_summary(value):
         df = df[1:]
         columns = [{"name": i, "id": i} for i in df.columns]
         data = df.to_dict("records")
-        # [{"name": i, "id": i} for i in t_pts.columns]
         return style, columns, data
 
 @app.callback(
@@ -272,7 +243,8 @@ def image_choice(value):
         style = {'display': 'none'}
         image_path = ""
     else:
-        style = {'display': 'block'}
+        style = {'display': 'block', 
+                 'textAlign': 'center'}
         image_path = f"assets/drivers/{value}.png"
     return image_path, style
 
@@ -285,22 +257,12 @@ def plot_select(value):
     if value is None:
         style = {'display': 'none'}
     else:
-        style = {'display': 'block'}
+        style = {'display': 'block',
+                #  'margin': '50px',
+                'margin-right': -80,
+                'margin-top': 30}
     return style, plot_driver(value)
-
-
 
 
 if __name__ == '__main__':
     app.run_server(debug=True)
-# from dash import dash, html, dcc
-
-
-# app = dash.Dash(__name__)
-
-# app.layout = html.Div([
-#     'This is my slider',
-#     dcc.Slider(min=0, max=5, value=2, marks={0: '0', 5: '5'})])
-
-# if __name__ == '__main__':
-#     app.run_server(debug=True)
