@@ -40,7 +40,7 @@ If you are proposing a feature:
 
 ## Get Started!
 
-Ready to contribute? Here's how to set up `spotify_assistant` for local development.
+Ready to contribute?
 
 1. Fork the repository and make changes to the forked version.
 

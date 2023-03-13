@@ -9,7 +9,7 @@ The second page is the `Drivers Summary` page. Initially only a dropdown is disp
 
 ## Contributing Guidelines
 Suggestions and contributions are always welcome! <br>
-Check out the contributing guidelines if you're looking to make additions to our project! Please note that this project is released with a Code of Conduct. By contributing to this project, you agree to abide by its terms.
+Check out the [contributing guidelines]('CONTRIBUTING.md') if you're looking to make additions to our project! Please note that this project is released with a [Code of Conduct]("CODE_OF_CONDUCT.md"). By contributing to this project, you agree to abide by its terms.
 
 ## License
 `f1-2021-dash-yxs` was created by Yingxin Song. It is licensed under the terms of the MIT license.
