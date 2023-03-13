@@ -82,6 +82,7 @@ app = dash.Dash(__name__,
                 external_stylesheets = [dbc.themes.SIMPLEX])
 
 app.layout = html.Div([
+    # First section -- title, info
     html.H1('Formula 1 Season 2021 Teams and Drivers'),
     html.Div([
         html.P('Welcome! This dashboard is based on the Formula 1 2021 Season statistics.'),
@@ -91,9 +92,11 @@ app.layout = html.Div([
              ),
     dbc.Container(
         dbc.Tabs([
+            # First page - Team info
             dbc.Tab([
                 dbc.Row([
                     html.P('The table below shows the total points each team earned in the 2021 Season.'),
+                    # Table summarizing team season performance
                     dbc.Col([
                         html.Div([
                             html.P('Select a row to learn more about a team:'),
@@ -115,6 +118,7 @@ app.layout = html.Div([
                                 ),
                             ])
                         ], width=6),
+                    # Table summaring specific team info
                     dbc.Col([
                         html.Br(),
                         html.Div([
@@ -142,7 +146,9 @@ app.layout = html.Div([
                             )
                     ])
             ], label='Teams Summary'),
+            # Second tab - Driver information
             dbc.Tab([
+                # Dropdown for selecting a driver
                 html.Div([
                     'Select a name to learn more about a driver:',
                     dcc.Dropdown(
@@ -150,13 +156,16 @@ app.layout = html.Div([
                         options = [{"label": n, "value": n} for n in d_names],
                         placeholder = 'Select a team'),
                     ]),
+                # Two sections in this column: image and table
                 dbc.Row([
                     dbc.Col([
+                        # Driver photo
                         html.Div([
                             html.Img(id='driver_img')
                         ], 
                                  style={'textAlign': 'center'}, id='img_show'
                                  ),
+                        # Driver information
                         html.Div([
                             dt.DataTable(
                             id='driver_info',
@@ -172,6 +181,7 @@ app.layout = html.Div([
                         ], style={'width': '100%'}, id='table_cont2'
                                  )
                     ]),
+                    # Other column shows a plot of driver rating info
                     dbc.Col([
                         html.Div([
                             html.Iframe(
@@ -188,12 +198,14 @@ app.layout = html.Div([
                 )
 ])
 
+# Callback for updating team information
 @app.callback(
     Output('table_cont1', 'style'),
     Output('teams_table', 'columns'),
     Output("teams_table", "data"),
     Input("teams_all", "selected_rows")
 )
+# Function to change team information to display
 def teams_display(selected_rows):
     if selected_rows is None:
         style = {'display': 'none'}
@@ -211,12 +223,14 @@ def teams_display(selected_rows):
         data = df.to_dict("records")
         return style, columns, data
 
+# Callback to change driver information to display
 @app.callback(
     Output('table_cont2', 'style'),
     Output('driver_info', 'columns'),
     Output("driver_info", "data"),
     Input("driver_selection", "value")
 )
+# Function to change driver info table
 def driver_summary(value):
     if value is None:
         style = {'display': 'none'}
@@ -233,11 +247,13 @@ def driver_summary(value):
         data = df.to_dict("records")
         return style, columns, data
 
+# Callback to change driver photo
 @app.callback(
     Output('driver_img', 'src'),
     Output('img_show', 'style'),
     Input('driver_selection', 'value')
 )
+# Function to change driver photo
 def image_choice(value):
     if value is None:
         style = {'display': 'none'}
@@ -248,11 +264,13 @@ def image_choice(value):
         image_path = f"assets/drivers/{value}.png"
     return image_path, style
 
+# Callback to change driver plot to display
 @app.callback(
     Output('plot_id', 'style'),
     Output('driver_plot', 'srcDoc'),
     Input('driver_selection', 'value')
 )
+# Function to change data to plot
 def plot_select(value):
     if value is None:
         style = {'display': 'none'}
