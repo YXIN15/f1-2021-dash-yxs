@@ -37,6 +37,8 @@ qual_results.rename(columns={'Team_y': 'Team'}, inplace=True)
 t_pts = results.groupby('Team')['Points'].sum()
 st_pts = qual_results.groupby('Team')['Points'].sum()
 t_pts = (t_pts+st_pts).sort_values(ascending=False).reset_index()
+t_pts = t_pts.reset_index().rename(columns={'index': 'Rank'})
+t_pts['Rank'] = t_pts['Rank'] + 1
 
 # Data wrangling for driver plot
 df1 = df1.iloc[:, 1:7]
@@ -100,47 +102,59 @@ app.layout = html.Div([
                     dbc.Col([
                         html.Div([
                             html.P('Select a row to learn more about a team:'),
-                            dt.DataTable(
-                                id='teams_all',
-                                columns=[{"name": i, "id": i} for i in t_pts.columns],
-                                data=t_pts.to_dict("records"),
-                                style_data={
-                                'whiteSpace': 'normal',
-                                'height': 'auto'},
-                                style_cell={'textAlign': 'left'},
-                                style_header={
-                                    'backgroundColor': 'rgb(255, 102, 102)',
-                                    'color': 'black',
-                                    'fontWeight': 'bold'
-                                },
-                                style_table={'height': '400px'},
-                                row_selectable = 'single'
-                                ),
+                            dbc.Card([
+                                dbc.CardHeader('Overall Team Rankings',
+                                               style={'textAlign': 'center'}),
+                                dbc.CardBody(
+                                    dt.DataTable(
+                                        id='teams_all',
+                                        columns=[{"name": i, "id": i} for i in t_pts.columns],
+                                        data=t_pts.to_dict("records"),
+                                        style_data={
+                                        'whiteSpace': 'normal',
+                                        'height': 'auto'},
+                                        style_cell={'textAlign': 'center'},
+                                        style_header={
+                                            'backgroundColor': 'rgb(255, 102, 102)',
+                                            'color': 'black',
+                                            'fontWeight': 'bold'
+                                        },
+                                        style_table={'height': '400px'},
+                                        row_selectable = 'single'
+                                        ),
+                                        )
+                                ])
                             ])
                         ], width=6),
                     # Table summaring specific team info
                     dbc.Col([
                         html.Br(),
                         html.Div([
-                        dt.DataTable(
-                            id='teams_table',
-                            style_cell={
-                                'textAlign': 'left',
-                                'height': 'auto',
-                                'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
-                                'whiteSpace': 'normal'
-                            },
-                            style_header={
-                                    'backgroundColor': 'rgb(255, 102, 102)',
-                                    'color': 'black',
-                                    'fontWeight': 'bold'
-                                },
-                            style_data={
-                                'whiteSpace': 'normal',
-                                'height': 'auto'},
-                            style_table={'height': '400px'}
-                            )
-                        ])
+                            dbc.Card([
+                                dbc.CardHeader('Team Information',
+                                               style={'textAlign': 'center'}),
+                                dbc.CardBody(
+                                    dt.DataTable(
+                                        id='teams_table',
+                                        style_cell={
+                                            'textAlign': 'left',
+                                            'height': 'auto',
+                                            'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
+                                            'whiteSpace': 'normal'
+                                        },
+                                        style_header={
+                                                'backgroundColor': 'rgb(255, 102, 102)',
+                                                'color': 'black',
+                                                'fontWeight': 'bold'
+                                            },
+                                        style_data={
+                                            'whiteSpace': 'normal',
+                                            'height': 'auto'},
+                                        style_table={'height': '400px'}
+                                        )
+                                    )
+                                ])
+                            ], style = {'margin-top': 15})
                         ],
                             style={'width': '100%'}, id='table_cont1'
                             )
@@ -161,7 +175,12 @@ app.layout = html.Div([
                     dbc.Col([
                         # Driver photo
                         html.Div([
+                            dbc.Card([
+                            dbc.CardHeader('Driver Information'),
+                            dbc.CardBody(
                             html.Img(id='driver_img')
+                            )
+                        ])
                         ], 
                                  style={'textAlign': 'center'}, id='img_show'
                                  ),
@@ -169,7 +188,7 @@ app.layout = html.Div([
                         html.Div([
                             dt.DataTable(
                             id='driver_info',
-                            style_cell={'textAlign': 'left'},
+                            style_cell={'textAlign': 'center'},
                             style_header={
                                     'backgroundColor': 'rgb(255, 102, 102)',
                                     'color': 'black',
@@ -215,7 +234,7 @@ def teams_display(selected_rows):
         return style, columns, data
     else:
         style = {'display': 'block'}
-        team_name = t_pts.iloc[selected_rows[0],0]
+        team_name = t_pts.iloc[selected_rows[0],1]
         df = teams_df.query('Team == @team_name').T.reset_index()
         df.columns = df.iloc[0]
         df = df[1:]
