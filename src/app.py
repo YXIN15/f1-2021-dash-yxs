@@ -83,6 +83,8 @@ def plot_driver(driver_name):
 app = dash.Dash(__name__,
                 external_stylesheets = [dbc.themes.SIMPLEX])
 
+server = app.server
+
 app.layout = html.Div([
     # First section -- title, info
     html.H1('Formula 1 Season 2021 Teams and Drivers'),
