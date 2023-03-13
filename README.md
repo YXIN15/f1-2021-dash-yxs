@@ -3,7 +3,7 @@
 This dashboard is based on the Formula 1 2021 Season data and highlights. A detailed proposal can be found [here](https://github.com/UBC-MDS/f1-2021-analysis/blob/main/reports/proposal.md).
 
 ## Usage
-The dashboard can be found [here](https://forumla1-2021-teams-and-drivers.onrender.com/) <br>
+[Click here](https://forumla1-2021-teams-and-drivers.onrender.com/) to view the dashboard! <br>
 
 The app opens to a `Teams Summary` page. This page initially displays one table, which shows the ranking of each Forumla 1 team at the end of the 2021 season, along with the total number of points each team earned. Clicking a radio button beside a name team will display a second table to the right. This second table contains information specific to each team, such as their full team name, where their base is located, the number of world championships they have have, and more. <br>
 
