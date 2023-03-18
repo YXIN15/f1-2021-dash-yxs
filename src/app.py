@@ -81,16 +81,19 @@ def plot_driver(driver_name):
     return chart.to_html()
 
 app = dash.Dash(__name__,
-                external_stylesheets = [dbc.themes.SIMPLEX])
+                external_stylesheets = [dbc.themes.SIMPLEX]) #SIMPLEX
 
 server = app.server
 
 app.layout = html.Div([
     # First section -- title, info
-    html.H1('Formula 1 Season 2021 Teams and Drivers'),
+    html.H1('Formula 1 Season 2021 Teams and Drivers',
+            style={'margin': '30px'}),
     html.Div([
-        html.P('Welcome! This dashboard is based on the Formula 1 2021 Season statistics.'),
-        html.P("Click on the tabs below to navigate between Team and Driver information.")],
+        html.P('Welcome! This dashboard is based on the Formula 1 2021 Season statistics.',
+               style={'fontSize': 20}),
+        html.P("Click on the tabs below to navigate between Team and Driver information.",
+               style={'fontSize': 20})],
              style={'margin-left': 50,
                     'margin-top': 25}
              ),
@@ -99,7 +102,8 @@ app.layout = html.Div([
             # First page - Team info
             dbc.Tab([
                 dbc.Row([
-                    html.P('The table below shows the total points each team earned in the 2021 Season.'),
+                    html.P('The table below shows the total points each team earned in the 2021 Season.',
+                           style={'fontSize': 20}),
                     # Table summarizing team season performance
                     dbc.Col([
                         html.Div([
@@ -171,7 +175,7 @@ app.layout = html.Div([
                         id="driver_selection",
                         options = [{"label": n, "value": n} for n in d_names],
                         placeholder = 'Select a team'),
-                    ]),
+                    ], style={'fontSize': 20, 'margin-bottom': 25}),
                 # Two sections in this column: image and table
                 dbc.Row([
                     dbc.Col([
@@ -207,7 +211,9 @@ app.layout = html.Div([
                         html.Div([
                             html.Iframe(
                                 id='driver_plot',
-                                style={'border-width': '0', 'width': '600px', 'height': '600px'}
+                                style={'border-width': '0', 'width': '600px', 
+                                       'height': '600px', 'marginTop': '50px',
+                                       'marginLeft': '50px'}
                             )
                         ],
                                  id='plot_id'
