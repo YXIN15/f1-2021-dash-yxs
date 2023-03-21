@@ -21,7 +21,7 @@ d_names = drivers_df.Driver.unique().tolist()
 
 # Driver information
 dr_sum = drivers_df.iloc[:, [0, 2, 3, 5, 6, 7, 8, 12]]
-dr_sum = dr_sum.merge(df1.iloc[:, [1, 7, 8, 9]], left_on='Driver', right_on='Driver')
+dr_sum = dr_sum.merge(df1.iloc[:, [1, 7, 8, 9]], left_on='Driver', right_on='Driver', how='left')
 
 # Data wrangling for Team Summary table
 results = results.merge(
@@ -53,7 +53,10 @@ melted_df = pd.melt(overall_df, id_vars=['Driver', 'Status'], value_vars=cols_ds
 
 # Format the driver information table
 def format(x):
-    return "${:.2f}M".format(x/1000000)
+    if x!= x:
+        return "NA"
+    else:
+        return "${:.2f}M".format(x/1000000)
 
 # Apply formatting to driving information table
 dr_sum['Contract Cost'] = dr_sum['Contract Cost'].apply(format)
