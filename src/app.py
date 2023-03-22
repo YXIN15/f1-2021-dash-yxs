@@ -91,7 +91,7 @@ server = app.server
 app.layout = html.Div([
     # First section -- title, info
     html.H1('Formula 1 Season 2021 Teams and Drivers',
-            style={'margin': '30px'}),
+            style={'margin': '30px', 'margin-bottom': 10}),
     html.Div([
         html.P('Welcome! This dashboard is based on the Formula 1 2021 Season statistics.',
                style={'fontSize': 20}),
@@ -111,7 +111,7 @@ app.layout = html.Div([
                     # Table summarizing team season performance
                     dbc.Col([
                         html.Div([
-                            html.P('Select a row to learn more about a team:', style={'margin-top': -10}),
+                            html.P('Select a team name to learn more about that team:', style={'margin-top': -10}),
                             dbc.Card([
                                 dbc.CardHeader('Overall Team Rankings',
                                                style={'textAlign': 'center'}),
