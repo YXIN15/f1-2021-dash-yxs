@@ -129,7 +129,7 @@ app.layout = html.Div([
                                             'fontWeight': 'bold'
                                         },
                                         style_table={'height': '400px'},
-                                        row_selectable = 'single'
+                                        # row_selectable = 'single'
                                         ),
                                         )
                                 ])
@@ -233,11 +233,11 @@ app.layout = html.Div([
     Output('table_cont1', 'style'),
     Output('teams_table', 'columns'),
     Output("teams_table", "data"),
-    Input("teams_all", "selected_rows")
+    Input("teams_all", "active_cell")
 )
 # Function to change team information to display
-def teams_display(selected_rows):
-    if selected_rows is None:
+def teams_display(active_cell):
+    if active_cell is None:
         style = {'display': 'none'}
         columns =[{"name": "Team", "id": "Team"}, 
                   {"name": "Team Information", "id": "Team Information"}]
@@ -245,7 +245,8 @@ def teams_display(selected_rows):
         return style, columns, data
     else:
         style = {'display': 'block'}
-        team_name = t_pts.iloc[selected_rows[0],1]
+        selected_rows = active_cell['row']
+        team_name = t_pts.iloc[selected_rows,1]
         df = teams_df.query('Team == @team_name').T.reset_index()
         df.columns = df.iloc[0]
         df = df[1:]
