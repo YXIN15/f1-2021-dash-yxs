@@ -177,7 +177,7 @@ app.layout = html.Div([
                     dcc.Dropdown(
                         id="driver_selection",
                         options = [{"label": n, "value": n} for n in d_names],
-                        placeholder = 'Select a team'),
+                        placeholder = 'Select a driver'),
                     ], style={'fontSize': 20, 'margin-bottom': 25}),
                 # Two sections in this column: image and table
                 dbc.Row([
