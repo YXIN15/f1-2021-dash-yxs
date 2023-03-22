@@ -96,9 +96,10 @@ app.layout = html.Div([
         html.P('Welcome! This dashboard is based on the Formula 1 2021 Season statistics.',
                style={'fontSize': 20}),
         html.P("Click on the tabs below to navigate between Team and Driver information.",
-               style={'fontSize': 20})],
+               style={'fontSize': 20, 'margin-top': -10})],
              style={'margin-left': 50,
-                    'margin-top': 25}
+                    # 'margin-top': 25
+                    }
              ),
     dbc.Container(
         dbc.Tabs([
@@ -106,11 +107,11 @@ app.layout = html.Div([
             dbc.Tab([
                 dbc.Row([
                     html.P('The table below shows the total points each team earned in the 2021 Season.',
-                           style={'fontSize': 20}),
+                           style={'fontSize': 20, 'margin-top': 10}),
                     # Table summarizing team season performance
                     dbc.Col([
                         html.Div([
-                            html.P('Select a row to learn more about a team:'),
+                            html.P('Select a row to learn more about a team:', style={'margin-top': -10}),
                             dbc.Card([
                                 dbc.CardHeader('Overall Team Rankings',
                                                style={'textAlign': 'center'}),
@@ -137,7 +138,7 @@ app.layout = html.Div([
                         ], width=6),
                     # Table summaring specific team info
                     dbc.Col([
-                        html.Br(),
+                        # html.Br(),
                         html.Div([
                             dbc.Card([
                                 dbc.CardHeader('Team Information',
@@ -163,7 +164,7 @@ app.layout = html.Div([
                                         )
                                     )
                                 ])
-                            ], style = {'margin-top': 15})
+                            ], style = {'margin-top': 30})
                         ],
                             style={'width': '100%'}, id='table_cont1'
                             )
